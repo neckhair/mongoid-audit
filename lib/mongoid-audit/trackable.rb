@@ -4,7 +4,7 @@ module Mongoid::Audit
 
     module ClassMethods
       def track_history(options={})
-        scope_name = self.collection_name.to_s.singularize.to_sym
+        scope_name = self.name.tableize.singularize.to_sym
         default_options = {
           :on             =>  :all,
           :except         =>  [:created_at, :updated_at, :deleted_at, :c_at, :u_at],
@@ -255,7 +255,10 @@ module Mongoid::Audit
 
     module SingletonMethods
       def history_trackable_options
-        @history_trackable_options ||= Mongoid::Audit.trackable_class_options[self.collection_name.to_s.singularize.to_sym]
+        @history_trackable_options ||= (
+          Mongoid::Audit.trackable_class_options[self.name.tableize.singularize.to_sym] ||
+          Mongoid::Audit.trackable_class_options[self.superclass.name.tableize.singularize.to_sym]
+        )
       end
     end
   end
