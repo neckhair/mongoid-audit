@@ -1,17 +1,16 @@
-ENV["MONGOID_ENV"] = "test"
-Mongoid.load!("config/mongoid.yml")
+Mongoid.configure do |config|
+  config.connect_to "mongoid-audit-test"
+end
 
 RSpec.configure do |config|
   config.before :each do
-    Mongoid.observers = Mongoid::Audit::Sweeper
+    HistoryTracker.add_observer(::Mongoid::Audit::Sweeper.instance)
   end
-  config.backtrace_clean_patterns = [
+  config.backtrace_exclusion_patterns = [
     # /\/lib\d*\/ruby\//,
     # /bin\//,
     # /gems/,
     # /spec\/spec_helper\.rb/,
     /lib\/rspec\/(core|expectations|matchers|mocks)/
-    ]
+  ]
 end
-
-

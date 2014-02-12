@@ -1,11 +1,15 @@
 module Mongoid::Audit
-  class Sweeper < Mongoid::Observer
+  class Sweeper < ActiveModel::Observer
     def controller
       Thread.current[:mongoid_history_sweeper_controller]
     end
 
     def controller=(value)
       Thread.current[:mongoid_history_sweeper_controller] = value
+    end
+
+    def self.observed_classes
+      [ Mongoid::Audit.tracker_class ]
     end
 
     # Hook to ActionController::Base#around_filter.
