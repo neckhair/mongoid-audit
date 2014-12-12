@@ -1,6 +1,8 @@
 module Mongoid::Audit
   module Trackable
     extend ActiveSupport::Concern
+    include Mongoid::History::Trackable
+    include Mongoid::Userstamp
 
     module ClassMethods
       def track_history(options={})
@@ -265,3 +267,4 @@ module Mongoid::Audit
     end
   end
 end
+
